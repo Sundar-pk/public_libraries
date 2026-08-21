@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Use Case Program — Progress Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --bg-alt:#F5F9F6;
+    --surface:#FFFFFF;
+    --surface-2:#F0F5F1;
+    --border:#DCE5DF;
+    --border-soft:#E9EFEA;
+    --text:#0F1F17;
+    --text-dim:#5B6B62;
+    --text-faint:#8B988F;
+    --accent:#00915A;
+    --accent-dim:#D8EFE3;
+    --done:#00915A;
+    --done-dim:#E4F5EC;
+    --progress:#D98A1E;
+    --progress-dim:#FBEEDA;
+    --pending:#E3E9E5;
+    --blocked:#D9503D;
+    --blocked-dim:#FBE7E3;
+    --radius:14px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(0,145,90,0.05), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, rgba(0,145,90,0.04), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+
+  ::selection{ background:var(--accent); color:#FFFFFF; }
+
+  .wrap{ max-width:1240px; margin:0 auto; padding:0 32px; }
+
+  /* ---------- HEADER ---------- */
+  header{
+    padding:64px 0 40px;
+    border-bottom:1px solid var(--border-soft);
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px;height:7px;border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-dim);
+  }
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:clamp(32px, 4vw, 46px);
+    letter-spacing:-0.01em;
+    margin:0 0 14px;
+  }
+  header p.sub{
+    font-size:16px;
+    color:var(--text-dim);
+    max-width:680px;
+    margin:0 0 40px;
+  }
+  header p.sub b{ color:var(--text); font-weight:600; }
+
+  /* ---------- FUNNEL ---------- */
+  .funnel{
+    display:flex;
+    align-items:stretch;
+    gap:0;
+    flex-wrap:wrap;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    background:var(--surface);
+    overflow:hidden;
+  }
+  .funnel-step{
+    flex:1 1 140px;
+    padding:22px 24px;
+    position:relative;
+    border-right:1px solid var(--border);
+  }
+  .funnel-step:last-child{ border-right:none; background:linear-gradient(180deg, rgba(0,145,90,0.08), transparent); }
+  .funnel-step .num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:28px;
+    font-weight:600;
+    color:var(--text);
+  }
+  .funnel-step:last-child .num{ color:var(--accent); }
+  .funnel-step .lbl{
+    margin-top:6px;
+    font-size:12.5px;
+    color:var(--text-dim);
+    letter-spacing:0.02em;
+  }
+  .funnel-step .arrow{
+    position:absolute;
+    right:-11px; top:50%; transform:translateY(-50%);
+    width:22px; height:22px;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text-faint);
+    font-family:'JetBrains Mono',monospace;
+    z-index:2;
+  }
+
+  /* ---------- KPI STRIP ---------- */
+  .kpis{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:1px;
+    background:var(--border-soft);
+    border:1px solid var(--border-soft);
+    border-radius:var(--radius);
+    overflow:hidden;
+    margin-top:16px;
+  }
+  .kpi{
+    background:var(--bg-alt);
+    padding:20px 22px;
+  }
+  .kpi .v{
+    font-family:'JetBrains Mono', monospace;
+    font-size:26px;
+    font-weight:600;
+    color:var(--text);
+  }
+  .kpi .v span{ font-size:14px; color:var(--text-faint); font-weight:400; }
+  .kpi .k{
+    margin-top:4px;
+    font-size:12px;
+    color:var(--text-dim);
+  }
+
+  /* ---------- CONTROLS ---------- */
+  .controls{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:16px;
+    margin:48px 0 24px;
+  }
+  .controls h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:20px;
+    font-weight:600;
+    margin:0;
+  }
+  .controls h2 span{ color:var(--text-faint); font-weight:400; font-size:14px; margin-left:8px; font-family:'JetBrains Mono',monospace;}
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; }
+  .filters button{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    padding:8px 14px;
+    border-radius:100px;
+    border:1px solid var(--border);
+    background:transparent;
+    color:var(--text-dim);
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .filters button:hover{ border-color:var(--accent); color:var(--text); }
+  .filters button.active{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#FFFFFF;
+    font-weight:600;
+  }
+  select#sortSel{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    background:var(--surface);
+    color:var(--text);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:8px 12px;
+  }
+
+  /* ---------- GRID ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(392px, 1fr));
+    gap:20px;
+    padding-bottom:60px;
+  }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:22px 24px 20px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .card:hover{ border-color:#B9CCC0; transform:translateY(-2px); box-shadow:0 6px 20px rgba(15,31,23,0.06); }
+  .card.is-blocked{ border-color:var(--blocked); box-shadow:0 0 0 1px rgba(217,80,61,0.12); }
+
+  .card-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .id{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    color:var(--text-faint);
+    letter-spacing:0.04em;
+  }
+  .pill{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.03em;
+    padding:4px 9px;
+    border-radius:100px;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    white-space:nowrap;
+  }
+
+  .card-title{ margin-top:-6px; }
+  .card-title h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:19px;
+    font-weight:600;
+    margin:0 0 3px;
+    line-height:1.25;
+  }
+  .card-title .alias{
+    font-size:12px;
+    color:var(--text-faint);
+    font-style:italic;
+  }
+  .objective{
+    font-size:13.5px;
+    color:var(--text-dim);
+    margin:0;
+  }
+
+  /* index gauge */
+  .index-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:12px 0 2px;
+    border-top:1px dashed var(--border-soft);
+  }
+  .gauge{
+    width:52px; height:52px; border-radius:50%;
+    position:relative;
+    flex:none;
+  }
+  .gauge .hole{
+    position:absolute; inset:6px;
+    border-radius:50%;
+    background:var(--surface);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px; font-weight:700;
+    color:var(--text);
+  }
+  .index-label{ }
+  .index-label .t{
+    font-size:11px; color:var(--text-faint); letter-spacing:0.04em; text-transform:uppercase;
+  }
+  .index-label .v{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px; color:var(--text-dim); margin-top:2px;
+  }
+
+  /* pipeline rail */
+  .rail-wrap{ padding-top:4px; }
+  .rail{
+    display:flex;
+    gap:4px;
+  }
+  .gate{
+    flex:1;
+    height:7px;
+    border-radius:3px;
+    background:var(--pending);
+    position:relative;
+  }
+  .gate.done{ background:var(--done); }
+  .gate.progress{
+    background:var(--progress);
+  }
+  .gate.progress::after{
+    content:"";
+    position:absolute; inset:-3px;
+    border-radius:6px;
+    border:1px solid var(--progress);
+    animation:pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ opacity:.55; transform:scale(1); }
+    50%{ opacity:1; transform:scale(1.04); }
+  }
+  .gate-labels{
+    display:flex;
+    gap:4px;
+    margin-top:7px;
+  }
+  .gate-labels span{
+    flex:1;
+    text-align:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px;
+    letter-spacing:0.02em;
+    color:var(--text-faint);
+  }
+
+  .next{
+    font-size:12.5px;
+    color:var(--text-dim);
+    padding-top:2px;
+  }
+  .next b{ color:var(--text); font-weight:600; }
+
+  .note{
+    font-size:12px;
+    padding:9px 12px;
+    border-radius:8px;
+    background:var(--progress-dim);
+    color:#8A5A0E;
+    border:1px solid rgba(217,138,30,0.28);
+  }
+  .note.blocked{
+    background:var(--blocked-dim);
+    color:#A5382A;
+    border-color:rgba(217,80,61,0.28);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .gate.progress::after{ animation:none; }
+    .card{ transition:none; }
+  }
+
+  /* ---------- LEGEND / FOOTER ---------- */
+  .legend{
+    display:flex;
+    gap:22px;
+    flex-wrap:wrap;
+    padding:20px 0 8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    color:var(--text-dim);
+  }
+  .legend .swatch{
+    display:inline-flex; align-items:center; gap:7px;
+  }
+  .legend .dot{ width:9px; height:9px; border-radius:3px; }
+
+  footer{
+    border-top:1px solid var(--border-soft);
+    padding:30px 0 70px;
+    color:var(--text-faint);
+    font-size:12px;
+  }
+  footer .methodology{
+    max-width:760px;
+    line-height:1.7;
+  }
+  footer .methodology b{ color:var(--text-dim); }
+
+  @media (max-width: 640px){
+    .wrap{ padding:0 18px; }
+    .kpis{ grid-template-columns:repeat(2,1fr); }
+    header{ padding:44px 0 32px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Internal AI Engineering Program</div>
+    <h1>Use Case Delivery — Progress Review</h1>
+    <p class="sub">Sourced from open internal LLM access (<b>Qwen</b>, <b>GPT‑OSS</b>) and external access (<b>Claude</b>) across engineering, QA and BA teams. Filtered down to a registered delivery set through effort/feature grouping and dependency review.</p>
+
+    <div class="funnel">
+      <div class="funnel-step"><div class="num">100+</div><div class="lbl">Ideas explored</div><div class="arrow">→</div></div>
+      <div class="funnel-step"><div class="num">50</div><div class="lbl">Presented for review</div><div class="arrow">→</div></div>
+      <div class="funnel-step"><div class="num">17</div><div class="lbl">Grouped by effort / feature</div><div class="arrow">→</div></div>
+      <div class="funnel-step"><div class="num">13</div><div class="lbl">Registered · in delivery</div></div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="v">44<span>/100</span></div><div class="k">Avg. Readiness Index</div></div>
+      <div class="kpi"><div class="v">7<span>/13</span></div><div class="k">In Architecture or FRC review</div></div>
+      <div class="kpi"><div class="v">2<span>/13</span></div><div class="k">Production‑bound</div></div>
+      <div class="kpi"><div class="v">2<span>/13</span></div><div class="k">Blocked on external approval</div></div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <h2>Delivery Pipeline <span>13 use cases · click to filter by build type</span></h2>
+    <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+      <div class="filters" id="filters">
+        <button class="active" data-type="all">All</button>
+        <button data-type="Agent">Agent</button>
+        <button data-type="Agentic">Agentic (Multi‑Agent)</button>
+        <button data-type="MCP Tool">MCP Tool</button>
+        <button data-type="Platform">Platform / Suite</button>
+        <button data-type="Skill Package">Skill Package</button>
+      </div>
+      <select id="sortSel">
+        <option value="idx-desc">Sort: Index ↓</option>
+        <option value="idx-asc">Sort: Index ↑</option>
+        <option value="name">Sort: Name A–Z</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="swatch"><span class="dot" style="background:var(--done)"></span>Gate complete</span>
+    <span class="swatch"><span class="dot" style="background:var(--progress)"></span>Active / next gate</span>
+    <span class="swatch"><span class="dot" style="background:var(--pending)"></span>Not yet reached</span>
+    <span class="swatch"><span class="dot" style="background:var(--blocked)"></span>Blocked — external dependency</span>
+  </div>
+
+  <div class="grid" id="grid"><!-- cards injected by JS --></div>
+
+  <footer>
+    <div class="methodology">
+      <b>Readiness Index</b> — one composite score per use case (0–100) derived from gate completion across the standard delivery pipeline: POC → Demo → Architecture Review → FRC Review → Beta → Production. Completed gates score fully; the current active gate scores partial credit. It is the single number used to rank and compare use cases regardless of build type (agent, MCP tool, skill package or platform).
+      <br><br>
+      Generated for engineering leadership review · data reflects status as reported by use case owners.
+    </div>
+  </footer>
+
+</div>
+
+<script>
+const DATA = [
+  {
+    id:"UC-01", name:"Unified Test Pack", alias:"", type:"Skill Package",
+    objective:"Covers the full test lifecycle in one AI platform: auto-generates functional/non-functional test cases and BDD features straight from BRDs/JIRAs, automates test planning and effort estimation, and self-heals UI locators across Selenium, Playwright and Cypress to cut ongoing automation maintenance.",
+    gates:["done","progress","pending","pending","pending","pending"],
+    index:25,
+    next:"Demo → beta testing rolled out to applications as skill packages; longer-term path to scale into a full agent.",
+    note:null
+  },
+  {
+    id:"UC-02", name:"WTX Suite Manager", alias:"", type:"Platform",
+    objective:"Brings AI to WTX map testing: a reusable command-line unit-test harness triggered from CI, a static-analysis engine for code-quality/security issues, and an LLM-driven test-case generator — plus an automated SWIFT type-tree migration script that keeps mapping rules current as the MX standard changes.",
+    gates:["progress","pending","pending","pending","pending","pending"],
+    index:10,
+    next:"Complete POC across remaining modules, then Architecture Review.",
+    note:null
+  },
+  {
+    id:"UC-03", name:"Craftsman Agents", alias:"Self-Healing Jenkins Agents", type:"Agent",
+    objective:"Captures Jenkins failure logs, runs LLM-based root-cause analysis, auto-patches via Git and retries the job with zero manual intervention — while re-ordering test execution to run only what's actually affected, targeting mean-time-to-recovery within 4 automated attempts.",
+    gates:["done","done","progress","pending","pending","pending"],
+    index:42,
+    next:"Architecture Review. Demo already shared with technical architects. Hosted as a library + agent inside Jenkins infra.",
+    note:null
+  },
+  {
+    id:"UC-04", name:"BDD Forge AI", alias:"", type:"Agentic",
+    objective:"A multi-agent system that reads product requirements and produces production-ready BDD/Cypress test code end-to-end — validating requirements, generating a prioritized backlog and Gherkin scenarios, then improving itself through a self-learning feedback loop tied to JIRA and Confluence.",
+    gates:["done","done","done","done","pending","progress"],
+    index:75,
+    next:"Production deployment. Architecture and FRC review both complete.",
+    note:null
+  },
+  {
+    id:"UC-05", name:"AI WCAG", alias:"", type:"MCP Tool",
+    objective:"An MCP tool applications call directly to scan and remediate WCAG accessibility issues in-flow, replacing accessibility as a manual, late-cycle audit step with something teams can check continuously during development.",
+    gates:["done","done","done","progress","pending","pending"],
+    index:58,
+    next:"FRC Review.",
+    note:"India CIO has shown interest — sponsor demo requested."
+  },
+  {
+    id:"UC-06", name:"Governance & Pre-CAB Audit", alias:"Domain Governance Program", type:"Agentic",
+    objective:"Pulls delivery data directly from JIRA to produce AI-scored release-readiness, predictability and risk metrics, auto-generates Pre-CAB summaries and audit-compliance evidence, and gives leadership one live dashboard instead of manually assembled status decks.",
+    gates:["done","pending","progress","pending","pending","pending"],
+    index:25,
+    next:"Architecture Review (pending). Agentic, scalable design.",
+    note:null
+  },
+  {
+    id:"UC-07", name:"Base Forge AI", alias:"", type:"Platform",
+    objective:"Generates fully-configured, production-ready microservices (Spring Boot, Kafka, PostgreSQL, Kubernetes, Vault) with security and observability built in from the start, so developers begin from a compliant scaffold instead of hand-building infrastructure — directly supporting the M2C cloud-migration strategy.",
+    gates:["done","pending","progress","pending","pending","pending"],
+    index:25,
+    next:"Architecture Review (pending).",
+    note:null
+  },
+  {
+    id:"UC-08", name:"Intelligent Document Processor", alias:"", type:"Agent",
+    objective:"An AI fax-to-STP pipeline for trade processing — OCR plus AI field extraction turns inbound faxes into ready-to-process, near-zero-defect data through a single API, removing the manual read-type-enter loop for any downstream system (Finance, Supply-Chain, CRM).",
+    gates:["done","done","done","progress","pending","pending"],
+    index:42,
+    next:"Business FRC Review, then Production deployment.",
+    note:null
+  },
+  {
+    id:"UC-09", name:"Agile Sprint Coach", alias:"", type:"MCP Tool",
+    objective:"An MCP tool wired directly into JIRA that surfaces real-time sprint and story progress on demand, so teams and leadership get live status without chasing manual updates or building reports by hand.",
+    gates:["done","done","done","progress","pending","pending"],
+    index:58,
+    next:"FRC Review.",
+    note:null
+  },
+  {
+    id:"UC-10", name:"Xpress Dev Suite", alias:"", type:"Platform",
+    objective:"Takes a unified, machine-readable spec — one both developers and the LLM can validate against — through to working code end-to-end, covering API contracts, Angular wireframe generation from images, and AI-assisted code review, targeting a 30% cut in spec-related rework.",
+    gates:["done","done","progress","pending","pending","pending"],
+    index:42,
+    next:"FRC Review (pending). Currently in beta testing with applications.",
+    note:null
+  },
+  {
+    id:"UC-11", name:"Sliders", alias:"", type:"Agentic",
+    objective:"An agentic, horizontally-scalable solution that is technically complete and packaged for production rollout — every engineering gate is closed, so what remains is a funding decision rather than a build decision.",
+    gates:["done","done","done","done","done","progress"],
+    index:92,
+    next:"Production deployment.",
+    note:"Blocked — awaiting CIO budget approval."
+  },
+  {
+    id:"UC-12", name:"Multi Tech Migration Agent", alias:"", type:"Agent",
+    objective:"A single AI-driven hub for legacy-to-modern migrations — Sybase to Oracle/PostgreSQL, MS SQL version upgrades, Angular and Coras version migration — with built-in sanity checks and rollback safeguards, wrapped in an extensible plug-in framework for future migration types.",
+    gates:["done","done","done","progress","pending","pending"],
+    index:58,
+    next:"FRC Review.",
+    note:null
+  },
+  {
+    id:"UC-13", name:"Green IT Dashboard", alias:"", type:"Platform",
+    objective:"A centralized dashboard that scores every application's infrastructure footprint — utilization, efficiency, sustainability — into one Green Score, flags idle or over-utilized resources, and auto-generates AI-based optimization recommendations to support ESG targets.",
+    gates:["done","pending","progress","pending","pending","pending"],
+    index:25,
+    next:"Architecture Review — currently paused.",
+    note:"Blocked — awaiting sign-off from the Green IT team."
+  },
+];
+
+const GATE_LABELS = ["POC","DEMO","ARCH","FRC","BETA","PROD"];
+
+function gaugeStyle(idx){
+  return `background: conic-gradient(var(--accent) ${idx*3.6}deg, var(--pending) 0deg);`;
+}
+
+function cardHTML(d){
+  const blocked = d.note && d.note.toLowerCase().startsWith("blocked");
+  const gates = d.gates.map((g,i)=>`<div class="gate ${g}"></div>`).join("");
+  const labels = GATE_LABELS.map(l=>`<span>${l}</span>`).join("");
+  return `
+  <div class="card ${blocked ? 'is-blocked' : ''}" data-type="${d.type}" data-index="${d.index}" data-name="${d.name}">
+    <div class="card-top">
+      <span class="id">${d.id}</span>
+      <span class="pill">${d.type}</span>
+    </div>
+    <div class="card-title">
+      <h3>${d.name}</h3>
+      ${d.alias ? `<div class="alias">${d.alias}</div>` : ``}
+    </div>
+    <p class="objective">${d.objective}</p>
+
+    <div class="index-row">
+      <div class="gauge" style="${gaugeStyle(d.index)}">
+        <div class="hole">${d.index}</div>
+      </div>
+      <div class="index-label">
+        <div class="t">Readiness Index</div>
+        <div class="v">${d.index} / 100</div>
+      </div>
+    </div>
+
+    <div class="rail-wrap">
+      <div class="rail">${gates}</div>
+      <div class="gate-labels">${labels}</div>
+    </div>
+
+    <div class="next"><b>Next:</b> ${d.next}</div>
+    ${d.note ? `<div class="note ${blocked ? 'blocked':''}">${blocked ? '⛔' : '★'} ${d.note}</div>` : ``}
+  </div>`;
+}
+
+const grid = document.getElementById('grid');
+let currentType = 'all';
+let currentSort = 'idx-desc';
+
+function render(){
+  let items = [...DATA];
+  if(currentType !== 'all'){
+    items = items.filter(d => d.type === currentType);
+  }
+  if(currentSort === 'idx-desc') items.sort((a,b)=> b.index - a.index);
+  if(currentSort === 'idx-asc') items.sort((a,b)=> a.index - b.index);
+  if(currentSort === 'name') items.sort((a,b)=> a.name.localeCompare(b.name));
+  grid.innerHTML = items.map(cardHTML).join('');
+}
+
+document.getElementById('filters').addEventListener('click', (e)=>{
+  if(e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('#filters button').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  currentType = e.target.dataset.type;
+  render();
+});
+
+document.getElementById('sortSel').addEventListener('change', (e)=>{
+  currentSort = e.target.value;
+  render();
+});
+
+render();
+</script>
+
+</body>
+</html>
