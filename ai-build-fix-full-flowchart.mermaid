@@ -1,0 +1,52 @@
+flowchart TD
+    A([Code pushed / PR raised]) --> B[Application Jenkinsfile triggers<br/>imports shared aiBuildFix Groovy library]
+    B --> C[Pipeline stages run:<br/>Checkout → Build → Test → Package]
+    C --> D{post block:<br/>Build result?}
+
+    %% ---------------- SUCCESS PATH ----------------
+    D -- SUCCESS --> E[No AI action needed]
+    E --> F[Idle/watch timer starts]
+    F --> G([Auto-terminate after 5 min<br/>no lingering monitor process])
+
+    %% ---------------- FAILURE PATH ----------------
+    D -- FAILURE --> H[/post-failure block calls:<br/>sharedLib.aiBuildFix params/]
+    H --> H1[["Params passed:<br/>• targetBranch<br/>• fixMode: newBranch / sameBranch<br/>• maxRetries<br/>• notifyChannel<br/>• llmModel"]]
+    H1 --> I[[Triggers downstream:<br/>AI Build Fix Pipeline]]
+
+    subgraph AIFIX [AI Build Fix Pipeline — separate job, avoids deadlock]
+        I --> J[Stage 1: Fetch failed build logs<br/>via Jenkins REST API]
+        J --> K[Stage 2: Send logs to LLM]
+        K --> L[LLM returns:<br/>failure category + root cause + proposed fix]
+        L --> M{fixMode config?}
+        M -- newBranch --> N1[Create/checkout branch<br/>e.g. fix/ai-auto]
+        M -- sameBranch --> N2[Apply patch directly<br/>on the working branch]
+        N1 --> O[Stage 3: Commit fix]
+        N2 --> O
+        O --> P[Trigger rebuild of<br/>original application pipeline]
+        P --> Q{Rebuild result?}
+    end
+
+    %% ---------------- REBUILD OUTCOMES ----------------
+    Q -- SUCCESS --> R{Which fixMode<br/>was used?}
+    R -- newBranch --> S[Open merge request<br/>against target branch]
+    R -- sameBranch --> T[Fix already committed<br/>in place]
+    S --> U([Notify developer:<br/>diagnosis + diff + MR link])
+    T --> U
+    U --> V([Done — build healthy])
+
+    Q -- STILL FAILING --> W{retries so far <br/>< maxRetries?}
+    W -- Yes --> X[Increment retry counter]
+    X --> J
+    W -- No, limit reached --> Y([Notify developer / on-call:<br/>auto-fix exhausted, manual review needed])
+    Y --> V
+
+    %% ---------------- STYLES ----------------
+    style G fill:#3ED598,stroke:#2ea876,color:#0a0f1d
+    style V fill:#3ED598,stroke:#2ea876,color:#0a0f1d
+    style Y fill:#F0616D,stroke:#c94750,color:#0a0f1d
+    style D fill:#182240,stroke:#3FD0E0,color:#E7ECF7
+    style Q fill:#182240,stroke:#3FD0E0,color:#E7ECF7
+    style M fill:#182240,stroke:#9B8CFB,color:#E7ECF7
+    style R fill:#182240,stroke:#9B8CFB,color:#E7ECF7
+    style W fill:#182240,stroke:#F5A742,color:#E7ECF7
+    style H1 fill:#0D1424,stroke:#3FD0E0,color:#B9E4EA
