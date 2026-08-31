@@ -1,0 +1,27 @@
+SELECT
+  CASE
+    WHEN table_name LIKE '_tool_gitlab%'      THEN 'GitLab'
+    WHEN table_name LIKE '_tool_jira%'        THEN 'Jira'
+    WHEN table_name LIKE '_tool_jenkins%'     THEN 'Jenkins'
+    WHEN table_name LIKE '_tool_sonarqube%'   THEN 'SonarQube'
+    WHEN table_name LIKE '_tool_github%'      THEN 'GitHub'
+    WHEN table_name LIKE '_tool_bitbucket%'   THEN 'Bitbucket'
+    WHEN table_name LIKE '_tool_azuredevops%' THEN 'Azure DevOps'
+    WHEN table_name LIKE '_tool_git\_%' ESCAPE '\\' THEN 'GitExtractor (raw git clone data)'
+    WHEN table_name LIKE '\_raw\_%' ESCAPE '\\' THEN 'Raw Collected Data (pre-transform cache)'
+    WHEN table_name LIKE '\_devlake%' ESCAPE '\\' THEN 'DevLake System / Migrations'
+    WHEN table_name IN ('commits','commit_files','commit_parents','pull_requests',
+                         'pull_request_comments','pull_request_commits','issues',
+                         'board_issues','boards','repos','project_mapping','projects',
+                         'accounts','users','cicd_deployment_commits','cicd_pipelines',
+                         'cicd_tasks','refs','issue_changelogs')
+                         THEN 'Domain Layer (combined/normalized, cross-tool)'
+    ELSE 'Other'
+  END AS connection_group,
+  COUNT(*) AS num_tables,
+  ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) AS size_mb,
+  ROUND(SUM(data_length + index_length) / 1024 / 1024 / 1024, 2) AS size_gb
+FROM information_schema.tables
+WHERE table_schema = 'lake'
+GROUP BY connection_group
+ORDER BY size_mb DESC;
