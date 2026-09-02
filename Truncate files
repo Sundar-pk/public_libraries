@@ -1,0 +1,11 @@
+-- Confirm what you're about to clear
+SELECT table_name, ROUND((data_length+index_length)/1024/1024,1) AS size_mb
+FROM information_schema.tables
+WHERE table_schema='lake' AND table_name LIKE '\_raw\_%' ESCAPE '\\'
+ORDER BY size_mb DESC;
+
+TRUNCATE TABLE _raw_gitlab_api_pull_requests;
+-- repeat per raw table
+
+SELECT ROUND(SUM(data_length+index_length)/1024/1024/1024,2) AS total_gb
+FROM information_schema.tables WHERE table_schema='lake';
