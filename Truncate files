@@ -9,3 +9,4 @@ TRUNCATE TABLE _raw_gitlab_api_pull_requests;
 
 SELECT ROUND(SUM(data_length+index_length)/1024/1024/1024,2) AS total_gb
 FROM information_schema.tables WHERE table_schema='lake';
+mysqldump -u merico -p --databases lake | gzip > ~/lake_backup_pre_cleanup_$(date +%Y%m%d).sql.gz
