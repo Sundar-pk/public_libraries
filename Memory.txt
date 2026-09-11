@@ -25,3 +25,7 @@ FROM information_schema.tables
 WHERE table_schema = 'lake'
 GROUP BY connection_group
 ORDER BY size_mb DESC;
+
+
+
+DevLake is an open-source engineering intelligence platform that brings together DORA and delivery metrics from GitLab, Jira, Jenkins, and SonarQube into a single, unified view of software delivery health. It enables organizations to objectively measure how engineering performance evolves over time — surfacing not only where delivery is accelerating, but also where quality or review discipline may be quietly slipping, insights that are easy to miss without consistent data. Fully self-hosted, it offers complete data ownership, no licensing cost, and the flexibility to scale from a handful of applications to an entire portfolio, with fine-grained access control for different stakeholder audiences. In an era where AI is reshaping how software gets built, DevLake gives engineering leadership the evidence-based foundation needed to understand that change with clarity rather than assumption.
