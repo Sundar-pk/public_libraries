@@ -1,0 +1,84 @@
+# Engineering Intelligence in the AI Era
+## 5-Minute Video Script — Narration + Visual Direction
+
+**Total runtime target:** ~5:00 | **Word count:** ~730 words (~145 wpm pace)
+**Visual source:** POC dashboard screenshots (Grafana) + presentation slides
+**Tone:** Polite, professional, measured — informative rather than promotional
+
+---
+
+### SCENE 1 — Opening (0:00–0:20)
+**Visual:** Title slide — "Engineering Intelligence in the AI Era"
+
+> As artificial intelligence becomes part of how we build software, one question naturally follows: is it actually helping us deliver better — or just helping us move faster? This is where engineering intelligence comes in. Over the past year, we piloted Apache DevLake, a self-hosted engineering metrics platform, across three applications, to help answer that question with data rather than assumption.
+
+---
+
+### SCENE 2 — Why This Matters (0:20–0:50)
+**Visual:** "Why This, Why Now" slide — the central question banner
+
+> Our teams already use AI-assisted development tools. Without measurement, every team's sense of progress remains a matter of opinion. With the right engineering metrics, that impression becomes evidence — tracked consistently, month over month, across delivery speed, quality, and team health. That's the gap this platform is designed to close.
+
+---
+
+### SCENE 3 — What We Measure (0:50–1:20)
+**Visual:** Four Pillars slide, then a GitLab/Jira dashboard screenshot
+
+> The platform draws directly from the tools our teams already use every day — GitLab, Jira, Jenkins, and SonarQube — with no additional process placed on developers. From there, it brings together four categories of signal: delivery speed, quality and reliability, throughput, and team health. Together, these give us a connected, ongoing view of how engineering is actually performing.
+
+---
+
+### SCENE 4 — The Pilot Journey (1:20–1:50)
+**Visual:** Journey/roadmap timeline slide
+
+> We began by evaluating several engineering-metrics platforms before selecting and self-hosting Apache DevLake, based on its fit with our existing toolchain. From there, we piloted the platform across three applications, collecting a full twelve months of real delivery data — enough to see genuine trends, not just a single snapshot in time.
+
+---
+
+### SCENE 5 — PR Cycle Time & Lead Time (1:50–2:35)
+**Visual:** GitLab dashboard — Mean Time to Merge chart; Jira dashboard — Lead Time chart
+
+> Two of the most telling signals we now track are PR Cycle Time and Lead Time. PR Cycle Time shows how long it takes a code change to move from creation through to release — and over the course of the pilot, this trended meaningfully faster across our applications. Lead Time tells a similar story from the requirements side — how long it takes an issue to move from creation to resolution. Watching both together gives us a much clearer picture of how quickly value is actually reaching production.
+
+---
+
+### SCENE 6 — On-Time Delivery & Author Contribution (2:35–3:20)
+**Visual:** Engineering Overview dashboard — On-time Delivery chart; Component-level "commits by author" chart
+
+> On-time delivery is another metric we now track consistently — the share of planned work that lands within its intended timeframe. Across our pilot applications, this trended in a positive, encouraging direction. We also gained visibility into contribution patterns — how work is distributed across our development teams, and how consistently the team is engaged month over month. This kind of visibility helps us recognize strong practices and support teams with the resources they need.
+
+---
+
+### SCENE 7 — Quality & Code Health (3:20–3:55)
+**Visual:** SonarQube dashboard — general overview panel
+
+> Alongside delivery metrics, the platform also gives us ongoing visibility into code quality and health — coverage, reliability, and maintainability signals from SonarQube. Rather than treating quality as a one-time check, this lets us track it as a continuous part of how we build, so that improvement areas are visible early and can be addressed as part of regular planning.
+
+---
+
+### SCENE 8 — A Broader, AI-Era Perspective (3:55–4:25)
+**Visual:** Phoenix synergy slide
+
+> As AI-assisted development becomes more common, this kind of engineering visibility becomes more valuable, not less. We see this as complementary to work already underway elsewhere in the organization — for instance, Global Engineering's exploration of AI observability tooling. Where that work looks at the quality of AI-generated output itself, our focus is on delivery outcomes — and the two, considered together, offer a fuller picture of how AI is changing the way we build software.
+
+---
+
+### SCENE 9 — What's Next (4:25–4:50)
+**Visual:** Scale roadmap slide
+
+> With the pilot validated across three applications, our next step is moving this platform into a centrally hosted environment, with appropriate access managed for both application managers and developers. From there, we're scoping a phased path to extend this visibility across our broader application portfolio, supported by consistent standards for branching and repository practices.
+
+---
+
+### SCENE 10 — Closing (4:50–5:00)
+**Visual:** Closing slide — green background, closing statement
+
+> As AI continues to reshape how we build software, our goal is simple: to measure that change thoughtfully, and use what we learn to keep improving. Thank you.
+
+---
+
+## Production Notes
+- **Pacing:** Scenes 5–7 (the metrics/findings section) are the core of the video — allow slightly longer visual dwell time on dashboard screenshots here than on transition slides.
+- **Visual pairing:** Where a specific dashboard screenshot is referenced, use the corresponding live POC screenshot rather than a mockup, for authenticity.
+- **Tone guardrails:** Narration intentionally avoids naming specific negative deltas (e.g., declining sub-metrics) and instead frames quality/code-health as an area of *ongoing visibility* — consistent with management's guidance to keep the framing measured and constructive.
+- **Numbers used:** 3 applications, 12 months of data, 4 tool integrations — confirm these match the final slide deck before recording.
