@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>DevLake Onboarding</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+<style>body{font-family:Arial,sans-serif;max-width:900px;margin:30px auto;color:#222}table{border-collapse:collapse;width:100%}th,td{border:1px solid #bbb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#EAF6F0}h1,h2{color:#00703F}</style></head>
+<body>
+<h1
+id="onboarding-an-application-to-devlake-engineering-metrics">Onboarding
+an Application to DevLake (Engineering Metrics)</h1>
+<h2 id="1-purpose-and-audience">1. Purpose and audience</h2>
+<p>This page explains, step by step, how an application is onboarded to
+Apache DevLake so that its delivery, quality and team-health metrics
+appear in the engineering-metrics dashboards. It is written for
+<strong>application managers and tech leads</strong> (who provide the
+information) and the <strong>DevLake admin team</strong> (who configure
+the platform).</p>
+<p>Onboarding follows one of <strong>two toolchain paths</strong>,
+depending on where the application's tools are hosted. Please follow the
+path that matches your application.</p>
+<h2 id="2-step-1-identify-your-toolchain">2. Step 1: Identify your
+toolchain</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Tool</th>
+<th>CIB toolchain</th>
+<th>ITG toolchain</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Source control</td>
+<td>Bitbucket Server</td>
+<td>GitLab</td>
+</tr>
+<tr class="even">
+<td>Issue tracking</td>
+<td>Jira CIB</td>
+<td>Jira Group</td>
+</tr>
+<tr class="odd">
+<td>Code quality</td>
+<td>SonarQube CIB</td>
+<td>SonarQube Group</td>
+</tr>
+<tr class="even">
+<td>CI / build</td>
+<td>Jenkins CIB</td>
+<td>Jenkins Group</td>
+</tr>
+<tr class="odd">
+<td>DevLake connection type</td>
+<td>Bitbucket Server, Jira, SonarQube, Jenkins</td>
+<td>GitLab, Jira, SonarQube, Jenkins</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> If your application uses tools from both
+toolchains (for example, Bitbucket with Jira Group), please tell us in
+the request form. We will set up each tool under its own connection.</p>
+<h2 id="3-step-2-gather-the-information">3. Step 2: Gather the
+information</h2>
+<p>Please collect the following before raising the request. Items marked
+with an asterisk (*) are mandatory.</p>
+<table>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Information</th>
+<th>Example / guidance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Application name*</td>
+<td>Name used for the DevLake project and dashboards</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Toolchain*</td>
+<td>CIB or ITG</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Repository URL(s)*</td>
+<td>Bitbucket Server project/repo (CIB) or GitLab project path (ITG).
+List every repository that belongs to the application</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Production branch*</td>
+<td>For example <code>main</code> or <code>master</code></td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Jira project key and board*</td>
+<td>For example <code>ABC</code> and the board name or ID</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>Jenkins URL*</td>
+<td><strong>The URL up to and including your project name</strong>, from
+the Jenkins CIB or Jenkins Group instance (see Step 4)</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>Jenkins deployment job name(s)*</td>
+<td>The job(s) that deploy to production</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>SonarQube project key</td>
+<td>For example <code>com.company:app-name</code></td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>Merge strategy</td>
+<td>Merge commit (recommended) or squash / rebase</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td>Jira ticket key in PR titles or branch names</td>
+<td>Yes / No (see "Practices that keep data accurate")</td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td>Application manager and technical contact*</td>
+<td>Names and email addresses</td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td>History to load</td>
+<td>Suggested: last 6 months</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-step-3-confirm-access">4. Step 3: Confirm access</h2>
+<p>DevLake reads data using <strong>service or API tokens</strong>, not
+personal credentials. Please confirm the following:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Tool</th>
+<th>What is needed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Bitbucket Server (CIB) or GitLab (ITG)</td>
+<td>Read access to the repositories listed above</td>
+</tr>
+<tr class="even">
+<td>Jira CIB or Jira Group</td>
+<td>Read access to the Jira project and board</td>
+</tr>
+<tr class="odd">
+<td>SonarQube CIB or Group</td>
+<td>Browse access to the Sonar project</td>
+</tr>
+<tr class="even">
+<td>Jenkins CIB or Jenkins Group</td>
+<td>Read access to the jobs under your project URL, using an API token
+from a <strong>service account</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note on Jenkins:</strong> Jenkins URLs are specific to the
+project name, so each application normally has <strong>its own Jenkins
+connection</strong> (its own URL and token). Bitbucket, GitLab, Jira and
+SonarQube typically use <strong>one shared connection per
+instance</strong>, and the application is added to it as a scope. A
+service account token is recommended for Jenkins because tokens tied to
+a personal login can stop working when sessions or passwords change.</p>
+<h2 id="5-step-4-request-onboarding">5. Step 4: Request onboarding</h2>
+<p>Please raise the request with the DevLake admin team, using the
+information from Step 2.</p>
+<ul>
+<li>Request channel:
+<code>{insert request link / mailbox / ticket queue}</code></li>
+<li>Contact: <code>{insert DevLake admin contact}</code></li>
+</ul>
+<p>The admin team will complete Steps 5 to 8.</p>
+<h2 id="6-step-5-devlake-connections-admin-team">6. Step 5: DevLake
+connections (admin team)</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Tool</th>
+<th>Connection</th>
+<th>Created</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CIB: Bitbucket Server, Jira CIB, SonarQube CIB</td>
+<td>One connection per instance</td>
+<td>Once, then reused by every CIB application</td>
+</tr>
+<tr class="even">
+<td>ITG: GitLab, Jira Group, SonarQube Group</td>
+<td>One connection per instance</td>
+<td>Once, then reused by every ITG application</td>
+</tr>
+<tr class="odd">
+<td>Jenkins CIB / Jenkins Group</td>
+<td>One connection <strong>per application</strong> (endpoint = the
+project-level Jenkins URL)</td>
+<td>At onboarding</td>
+</tr>
+</tbody>
+</table>
+<p>Where a tool is served over an internal certificate, the DevLake
+environment must trust the corporate CA certificate for that host. This
+is checked at this step.</p>
+<h2 id="7-step-6-create-the-devlake-project-admin-team">7. Step 6:
+Create the DevLake project (admin team)</h2>
+<ol type="1">
+<li>Create a DevLake <strong>project</strong> named after the
+application.</li>
+<li>Enable the <strong>DORA metrics</strong> option for the
+project.</li>
+<li>Add the application's resources to the project, from the matching
+connections:
+<ul>
+<li>repositories (Bitbucket Server or GitLab);</li>
+<li>Jira board;</li>
+<li>SonarQube project;</li>
+<li>Jenkins job(s).</li>
+</ul></li>
+<li>Apply the scope configuration (next step).</li>
+</ol>
+<h2 id="8-step-7-apply-the-scope-configuration-admin-team">8. Step 7:
+Apply the scope configuration (admin team)</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Setting</th>
+<th>What is configured</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Deployment detection</td>
+<td>Jenkins job name pattern that identifies a production
+deployment</td>
+</tr>
+<tr class="even">
+<td>Production environment</td>
+<td>Pattern identifying the production branch / environment (for example
+<code>^(main|master)$</code>)</td>
+</tr>
+<tr class="odd">
+<td>Issue types</td>
+<td>Jira types mapped to Requirement, Bug and Incident</td>
+</tr>
+<tr class="even">
+<td>PR to issue linking</td>
+<td>Pattern that finds the Jira key in PR titles or branch names</td>
+</tr>
+<tr class="odd">
+<td>Data range</td>
+<td>Start date for the first collection</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-step-8-run-the-first-collection-and-verify">9. Step 8: Run the
+first collection and verify</h2>
+<ol type="1">
+<li>The admin team runs the first collection and sets a <strong>daily or
+periodic schedule</strong>.</li>
+<li>The admin team and the application manager check the results
+together:</li>
+</ol>
+<table>
+<thead>
+<tr class="header">
+<th>Check</th>
+<th>Expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Collection completes without errors</td>
+<td>All tools show success</td>
+</tr>
+<tr class="even">
+<td>Dashboard shows the application</td>
+<td>The application is selectable in the project filter</td>
+</tr>
+<tr class="odd">
+<td>Pull requests and commits appear</td>
+<td>Counts look reasonable for the period</td>
+</tr>
+<tr class="even">
+<td>Jira issues appear</td>
+<td>Bugs and requirements are classified correctly</td>
+</tr>
+<tr class="odd">
+<td>Deployments appear</td>
+<td>Production deployments are listed, so DORA metrics are
+calculated</td>
+</tr>
+<tr class="even">
+<td>Sonar data appears</td>
+<td>Coverage, bugs and code smells are visible</td>
+</tr>
+</tbody>
+</table>
+<ol start="3" type="1">
+<li>Dashboard access is given to the application's team as
+<strong>view-only</strong>.</li>
+</ol>
+<h2 id="10-practices-that-keep-data-accurate">10. Practices that keep
+data accurate</h2>
+<p>Please consider the following so that the metrics are comparable
+across applications.</p>
+<ul>
+<li><strong>Merge strategy:</strong> use <em>merge commit</em> and avoid
+squash or rebase merges where possible. Squashing changes commit
+identifiers, which can leave deployment-time metrics empty.</li>
+<li><strong>Ticket keys:</strong> include the Jira key in PR titles or
+branch names, so delivery can be traced back to requirements.</li>
+<li><strong>Branch naming:</strong> use a consistent production branch
+name.</li>
+<li><strong>Jenkins job naming:</strong> use a clear, consistent name
+for production deployment jobs.</li>
+<li><strong>Jira hygiene:</strong> keep issue types and statuses up to
+date.</li>
+</ul>
+<h2 id="11-common-issues-and-resolutions">11. Common issues and
+resolutions</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Resolution</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Jenkins returns 401</td>
+<td>Token expired, or tied to a personal login</td>
+<td>Issue an API token from a service account and update the
+connection</td>
+</tr>
+<tr class="even">
+<td>Jira returns 429 (rate limit)</td>
+<td>Collection rate too high</td>
+<td>The admin team lowers the connection's rate limit</td>
+</tr>
+<tr class="odd">
+<td>Certificate or TLS error</td>
+<td>Corporate CA not trusted by DevLake</td>
+<td>Admin team adds the CA certificate for that host</td>
+</tr>
+<tr class="even">
+<td>Dashboard empty</td>
+<td>Wrong time range, or project not selected</td>
+<td>Check the dashboard time range and the project filter</td>
+</tr>
+<tr class="odd">
+<td>Deployment-time metric empty</td>
+<td>Squash or rebase merge, or deployment pattern not matching</td>
+<td>Review the merge strategy and the deployment job pattern</td>
+</tr>
+<tr class="even">
+<td>Repository missing</td>
+<td>Not added to the project scope</td>
+<td>Send the repository URL to the admin team</td>
+</tr>
+</tbody>
+</table>
+<h2 id="12-roles-and-responsibilities">12. Roles and
+responsibilities</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Role</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Application manager / tech lead</td>
+<td>Provides Step 2 information, confirms access, reviews the first
+results</td>
+</tr>
+<tr class="even">
+<td>DevLake admin team</td>
+<td>Creates connections, project and configuration, runs and schedules
+collection</td>
+</tr>
+<tr class="odd">
+<td>Tool owners (Bitbucket, GitLab, Jira, SonarQube, Jenkins)</td>
+<td>Provide read access and service account tokens</td>
+</tr>
+</tbody>
+</table>
+<h2 id="13-onboarding-checklist">13. Onboarding checklist</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" />Toolchain identified (CIB or
+ITG)</label></li>
+<li><label><input type="checkbox" />Information in Step 2
+collected</label></li>
+<li><label><input type="checkbox" />Access and service account token
+confirmed</label></li>
+<li><label><input type="checkbox" />Request raised with the DevLake
+admin team</label></li>
+<li><label><input type="checkbox" />Connections and project
+created</label></li>
+<li><label><input type="checkbox" />Scope configuration
+applied</label></li>
+<li><label><input type="checkbox" />First collection verified with the
+application manager</label></li>
+<li><label><input type="checkbox" />Dashboard access shared with the
+team</label></li>
+</ul>
+<p>We would be glad to assist with any questions during onboarding.
+Thank you for your cooperation.</p>
+</body>
+</html>
