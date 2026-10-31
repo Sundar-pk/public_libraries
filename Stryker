@@ -1,0 +1,77 @@
+TASK: Set up and run Stryker mutation testing on this Angular 21 app that uses Jest 30.x. Jest unit tests already exist and pass. Complete it step by step and report real command output.
+
+HARD RULES
+1. Do NOT suggest or migrate to Vitest. Stryker supports Jest through @stryker-mutator/jest-runner. If you think something is unsupported, prove it with the exact error text and the output of `npm view` for the package's peerDependencies. Never conclude from memory.
+2. Do NOT modify application source or existing spec files. Only add dev dependencies and Stryker config.
+3. After every step, paste the exact command and the exact output (last 30 lines on failure). Do not summarize errors, quote them.
+4. Fix one problem at a time and re-run. Do not change several things at once.
+5. If blocked for more than 2 attempts on one error, stop and report the error, what you tried, and your best hypothesis.
+6. Shell is Windows PowerShell. Use `npx` and forward slashes in config paths.
+
+STEP 0: Baseline (do not skip)
+- Run `node -v`, `npm -v`, and print the "dependencies"/"devDependencies" entries for: jest, jest-preset-angular, ts-jest, @angular/core, typescript, @types/jest, jest-environment-jsdom.
+- Find how tests run: show the "test" script in package.json, the "test" target in angular.json (builder name), and locate jest.config.ts / jest.config.js / "jest" key in package.json. Print the config file contents.
+- Run `npx jest` (not `ng test`). It MUST pass. If it fails, fix the environment first and report; mutation testing cannot start on a red suite.
+- DECISION: 
+  A) If tests run via a standalone Jest config (jest-preset-angular + jest.config), continue to Step 1.
+  B) If tests run only through an Angular builder (for example @angular/build:jest), create a standalone jest.config.ts with jest-preset-angular that runs the same specs, confirm `npx jest` passes with it, then continue. Do not change the existing builder.
+
+STEP 1: Check version compatibility
+- Run `npm view @stryker-mutator/core version` and `npm view @stryker-mutator/jest-runner version peerDependencies`.
+- Confirm the jest-runner version supports Jest 30 and the installed @stryker-mutator/core. If the latest jest-runner does not, check the release notes and report before proceeding.
+- All @stryker-mutator/* packages must be the SAME version.
+
+STEP 2: Install
+- `npm install --save-dev @stryker-mutator/core @stryker-mutator/jest-runner`
+- If install fails with certificate/PKIX/UNABLE_TO_VERIFY errors, this is the corporate registry/proxy. Report the error and check `npm config get registry`; do NOT disable security globally. Ask me for the CA file path and then use `npm config set cafile <path>`.
+- Do NOT install the typescript-checker yet (add it in Step 6).
+
+STEP 3: Minimal config (stryker.config.json in project root)
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "jest",
+  "jest": { "configFile": "<path to the working jest config from Step 0>" },
+  "coverageAnalysis": "perTest",
+  "mutate": ["src/app/services/**/*.ts", "!src/**/*.spec.ts", "!src/**/*.module.ts", "!src/**/*.routes.ts"],
+  "reporters": ["clear-text", "progress", "html"],
+  "htmlReporter": { "fileName": "reports/mutation/index.html" },
+  "thresholds": { "high": 80, "low": 60, "break": 0 },
+  "concurrency": 2,
+  "timeoutMS": 10000,
+  "tempDirName": ".stryker-tmp",
+  "cleanTempDir": true
+}
+Start with ONE small folder in "mutate" (services) so the first run is short.
+
+STEP 4: First run
+- `npx stryker run`
+- Expected: "Initial test run" passes, then mutants are tested, then a score table prints.
+- If the initial test run fails, run the same test through Jest alone from the sandbox copy (`.stryker-tmp/sandbox*`) and report the exact error. Typical causes: Jest config using relative/rootDir paths, setup files, moduleNameMapper, or ESM settings that break in the copied sandbox.
+- If tests behave differently in the sandbox, try setting "coverageAnalysis": "off" once to see if perTest is the problem, then report.
+
+STEP 5: Fix common problems (only if they occur)
+- "Cannot find jest config": point jest.configFile to the real file.
+- ts-node errors loading jest.config.ts: install ts-node as a devDependency, or convert the config to jest.config.js.
+- Timeouts or "dry run timed out": raise "timeoutMS" and lower "concurrency" to 1.
+- Out of memory: run with `$env:NODE_OPTIONS="--max-old-space-size=4096"`.
+- Too slow: reduce "mutate" scope.
+
+STEP 6: Expand safely
+- Add more folders to "mutate" one at a time (components, pipes, guards, interceptors), re-running after each.
+- Optionally add the TypeScript checker: `npm i -D @stryker-mutator/typescript-checker`, then add "checkers": ["typescript"], "tsconfigFile": "tsconfig.json" (or tsconfig.spec.json if needed). It removes mutants that don't compile but is slower. Skip it if it errors repeatedly.
+- Turn on incremental runs: add "incremental": true, "incrementalFile": "reports/stryker-incremental.json" so later runs only test changed code.
+
+STEP 7: Add scripts and ignore files
+- package.json script: "mutation": "stryker run"
+- .gitignore: add .stryker-tmp/ and reports/mutation/
+
+STEP 8: Final report (required format)
+1. Versions used: Node, Angular, Jest, Stryker core, jest-runner.
+2. Files changed/added.
+3. Exact command to run mutation tests.
+4. Final score table (killed, survived, no coverage, timeout) for the scope tested.
+5. Path to the HTML report.
+6. Any problems hit and the exact fix for each.
+7. Recommended next folders to add to "mutate".
+
+DONE WHEN: `npx stryker run` completes with a score table and an HTML report is generated.
