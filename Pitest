@@ -9,3 +9,53 @@ env:
 
 pitest:
   - cmd: '{{env.pitest_cmd}}'
+
+stages:
+  - build
+  - mutation
+  - sonar
+  - sonar-gate
+  - publish
+  - sbom
+  - security
+  - security-gates
+
+pitest:
+  stage: mutation
+  image: $CI_REGISTRY/jdkmvn:21-n16
+  tags:
+    - ocp_s
+  needs:
+    - job: build-code
+      artifacts: false
+  interruptible: true
+  rules:
+    - if: '$CIB_MR_IID'
+    - if: '$CIB_COMMIT_BRANCH =~ /^(?:develop)$/'
+  allow_failure: true
+  variables:
+    PITEST_VERSION: "1.25.7"
+    PITEST_THRESHOLD: "0"
+    PITEST_POM: "pom.xml"
+    PITEST_EXTRA_OPTS: ""
+    MAVEN_MIRROR_URL: "<artifactory_host>/artifactory/<artifactory_repo>"
+  cache:
+    - key: default
+      paths:
+        - .m2/repository
+  script:
+    - |
+      set -eu
+      cat > pit-settings.xml <<EOF
+      <settings>
+        <servers><server><id>artifactory</id><username>${ARTIFACTORY_USER}</username><password>${ARTIFACTORY_PASSWORD}</password></server></servers>
+        <mirrors><mirror><id>artifactory</id><mirrorOf>*</mirrorOf><url>${MAVEN_MIRROR_URL}</url></mirror></mirrors>
+      </settings>
+      EOF
+    - mvn -s pit-settings.xml -Dmaven.repo.local=.m2/repository -B --no-transfer-progress -f "$PITEST_POM" test-compile org.pitest:pitest-maven:${PITEST_VERSION}:mutationCoverage -DmutationThreshold="$PITEST_THRESHOLD" -DoutputFormats=HTML,XML -DtimestampedReports=false $PITEST_EXTRA_OPTS
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - "**/target/pit-reports/"
+
