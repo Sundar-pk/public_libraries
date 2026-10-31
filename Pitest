@@ -1,0 +1,11 @@
+env:
+  pitest_scan: false
+  pitest_version: '1.25.7'
+  pitest_threshold: 0
+  pitest_threads: 4
+  pitest_java_home: '$JAVA_HOME'
+  pitest_extra_opts: ''
+  pitest_cmd: JAVA_HOME={{env.pitest_java_home}} mvn {{env.mvn_opts}} test-compile org.pitest:pitest-maven:{{env.pitest_version}}:mutationCoverage -DmutationThreshold={{env.pitest_threshold}} -Dthreads={{env.pitest_threads}} -DoutputFormats=HTML,XML -DtimestampedReports=false {{env.pitest_extra_opts}}
+
+pitest:
+  - cmd: '{{env.pitest_cmd}}'
