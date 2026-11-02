@@ -1,0 +1,363 @@
+Today, I'm going to walk you through our ITG DevOps toolchain and explain how we use different tools to manage the complete software delivery lifecycle.
+Our objective is to establish a standardized development and delivery process, starting from requirement planning and continuing through coding, building, quality validation, security scanning, deployment and operations.
+Let's look at how each tool contributes to this process."
+
+Explain the tools one by one:
+1. JIRA – Planning
+"We use JIRA to manage project requirements, user stories, tasks and defects.
+It helps us maintain traceability between business requirements, development activities and testing activities.
+Every development activity should ideally be associated with a corresponding JIRA ticket."
+2. GitLab – Source Code Management
+"GitLab is our version control platform.
+Developers maintain their source code in Git repositories. We follow branching strategies, create feature branches and use merge requests to review code before merging it into the development or release branches."
+3. GitLab CI/CD – Build and Automation
+"GitLab CI/CD automates the software delivery pipeline.
+Whenever developers push their changes or create a merge request, the pipeline can automatically execute build activities, unit tests and other validation steps.
+This reduces manual effort and provides faster feedback."
+4. SonarQube – Code Quality
+"SonarQube performs static code analysis.
+It identifies bugs, code smells, security hotspots and code coverage gaps.
+It also helps us maintain coding standards and prevent poor-quality code from progressing further in the delivery pipeline."
+5. Nexus IQ and Fortify – Security Validation
+"These tools help us implement DevSecOps practices.
+Nexus IQ evaluates open-source dependencies, including known vulnerabilities and license compliance.
+Fortify performs Static Application Security Testing, commonly called SAST, to identify potential security vulnerabilities in our application source code."
+6. JFrog Xray – Artifact Security
+"JFrog Xray scans application artifacts and packages.
+It helps identify vulnerabilities and policy violations in the artifacts that we generate and distribute."
+
+Slide 2 – Global Overview on ITG Toolchain
+
+This slide explains the application onboarding process into the ITG toolchain.
+Whenever a new application or project is introduced, it needs to be onboarded into our centralized DevOps environment.
+The purpose is to ensure that every application follows the organization's standard development, quality and security practices."
+
+1. Application onboarding
+"When a new application is onboarded, the required project configuration and access permissions are established in the ITG DevOps environment.
+This ensures that the application can use the standard toolchain."
+2. Project APcode and pipeline information
+"Each application must follow the prescribed project identification and pipeline naming conventions.
+The same project information should be consistently maintained across the relevant tools.
+This helps us establish traceability between GitLab, SonarQube, security scanning tools and artifact repositories."
+3. DevOps Portal
+"The DevOps portal acts as the central entry point for managing tool access.
+From this portal, users can manage their access rights and navigate to the different ITG toolchain platforms."
+4. Access management
+"If your account access expires or becomes inactive, you can use the self-service option.
+Navigate to 'Manage My Access' and reactivate your account, subject to the applicable access policy."
+5. SonarQube naming convention
+"One important convention to remember is the SonarQube project key.
+As mentioned in the slide, the naming convention is:
+trigram_pipeline_name
+We should follow this convention consistently while configuring projects."
+Conclude the slide:
+"The key takeaway is that application onboarding is not just about creating a repository. It includes proper project identification, tool configuration, access management and pipeline integration."
+
+Slide 3 – Scanning Tools: DevSecOps
+
+This is one of the most important parts of our DevOps process.
+DevSecOps means integrating security practices into the complete software development lifecycle rather than treating security as a separate activity.
+We use four major scanning tools, and each tool has a different responsibility."
+Explain the four tools:
+1. SonarQube – Code Analysis
+"SonarQube analyzes the application source code.
+It identifies:
+Bugs.
+Code smells.
+Security hotspots.
+Code coverage issues.
+Maintainability problems.
+It also provides a quality gate.
+If the configured quality gate conditions are not satisfied, the pipeline can be prevented from progressing."
+2. Nexus IQ – Open-Source Risk
+"Modern applications depend on several third-party libraries and open-source components.
+Nexus IQ checks these dependencies against configured security and license policies.
+For example, if our Angular application uses a third-party npm package containing a known vulnerability, Nexus IQ can identify the associated risk."
+3. Fortify – Application Security
+"Fortify performs Static Application Security Testing.
+It analyzes application source code to identify security weaknesses.
+For example:
+SQL injection.
+Cross-site scripting.
+Insecure data handling.
+Other application security vulnerabilities.
+This helps developers identify security issues before the application reaches production."
+4. JFrog Xray – Artifact Scanning
+"JFrog Xray focuses on the security of generated artifacts and packages.
+After the application is built, Xray can analyze the artifact and its associated dependencies for known vulnerabilities and policy violations.
+This helps ensure that vulnerable artifacts are not promoted through the delivery process."
+Explain the bottom workflow
+"Let's understand how these tools work together.
+The developer commits code.
+A pull request or merge request is created for review.
+SonarQube performs code quality analysis.
+Fortify performs security analysis.
+Nexus IQ checks open-source dependency risks.
+JFrog Xray scans the generated artifact.
+Based on the configured release policies, the application proceeds for release approval.
+If a mandatory security or quality check fails, the pipeline should be blocked.
+The responsible team must analyze the issue, fix it and rerun the pipeline."
+Important statement:
+"Our objective is not simply to execute scans. It is to ensure that security and quality issues are identified early and resolved before release."
+
+
+Slide 4 – Activities: ITG Toolchain & DevSecOps
+
+This slide summarizes the major activities and responsibilities involved in supporting application teams through the ITG toolchain."
+Explain the activities in groups rather than reading every bullet individually.
+1. Application onboarding and configuration
+"We support application teams during onboarding into the ITG DevOps environment.
+This includes repository configuration, SonarQube project setup, pipeline integration and the required tool configurations."
+2. CI/CD pipeline implementation
+"We help teams implement CI pipelines using GitLab CI/CD.
+We also support migration from existing Jenkins pipelines to GitLab CI/CD.
+The objective is to standardize pipeline implementation and reduce manual build and deployment activities."
+3. Security tool integration
+"We assist teams with onboarding and configuring Fortify and Nexus IQ.
+We ensure that the required SAST and Software Composition Analysis checks are integrated into the pipeline."
+4. DevSecOps standards and best practices
+"We guide development teams to follow organizational DevSecOps standards.
+This includes secure coding practices, code quality standards, dependency management and appropriate security controls."
+5. Tools and plugin support
+"We also provide technical assistance for tool-related issues, pipeline failures, configuration problems and plugin integration."
+6. Testing guidance
+"We encourage teams to follow a Test-Driven Development approach wherever applicable.
+We provide guidance on unit testing and automation testing to improve application reliability and maintainability."
+7. SonarQube report validation
+"Before CAB approval, we help validate SonarQube reports.
+We pay particular attention to technical debt, unit test coverage and the applicable quality requirements.
+The objective is to ensure that the application satisfies the required quality criteria before proceeding with release approval."
+Conclude the slide:
+"So, our responsibility is not limited to maintaining tools. We work closely with application teams to improve development practices, automate delivery and maintain quality and security standards."
+
+Slide 5 – Git Tooling & Practices
+
+Git is the foundation of our source code management process.
+Following a consistent branching strategy and naming convention is important because it helps us maintain clean repositories, manage releases and avoid unnecessary integration issues."
+1. Branch naming conventions
+"We follow a structured branching approach.
+We have different branches for different purposes."
+
+
+2. Feature branch creation
+"When a developer starts working on a new feature or task, they should create a separate feature branch from the appropriate base branch.
+For example:
+feature/TCAAS1234-XXX
+Here, the branch name includes the JIRA ticket reference.
+This helps us trace code changes back to the corresponding requirement or defect."
+3. Release naming convention
+"We should follow the agreed release naming convention.
+Before creating a release package, we must ensure that the correct release branch and version tag are used."
+4. Tag verification
+"Tags are important because they identify a specific version of the source code.
+For example:
+1.0, 1.1 or the organization's agreed semantic version format.
+We should verify that the correct tag has been created and points to the intended commit."
+5. Post-release commit validation
+"One important practice mentioned here is to ensure that there are no unintended commits after release package creation.
+The source code used for the release must remain traceable to the approved release version.
+Any subsequent changes should follow the appropriate branching and release process."
+6. Compare branches
+"Before merging or releasing, developers should compare the relevant branches.
+This helps identify missing commits, unexpected changes and differences between the release and development branches."
+7. Commit message convention
+"We should use meaningful commit messages.
+As mentioned in the slide, the recommended format is:
+JIRA ID + Fix description
+For example:
+TCAAS1234 - Fixed dashboard loading issue
+This improves traceability and makes code reviews easier."
+Explain the GitFlow diagram
+"The diagram illustrates how feature development, release preparation and production hotfixes are managed.
+Feature branches are used for individual development activities.
+Changes are integrated into the develop branch.
+A release branch is created when we prepare a new release.
+Once validated, the release is merged into the production branch and tagged.
+If a critical production issue occurs, a hotfix branch is created.
+The hotfix must also be merged back into the relevant development and release branches to avoid losing the correction."
+Closing statement
+"Following these Git practices helps us maintain repository consistency, release traceability and a controlled software delivery process."
+
+
+vimal craftsman and I have 14 years of experience with software development.
+
+
+Today, I'm going to walk you through our ITG DevOps toolchain and explain how we use different tools to manage the complete software delivery lifecycle.
+Our objective is to establish a standardized development and delivery process, starting from requirement planning and continuing through coding, building, quality validation, security scanning, deployment and operations.
+Let's look at how each tool contributes to this process."
+
+Explain the tools one by one:
+1. JIRA – Planning
+"We use JIRA to manage project requirements, user stories, tasks and defects.
+It helps us maintain traceability between business requirements, development activities and testing activities.
+Every development activity should ideally be associated with a corresponding JIRA ticket."
+2. GitLab – Source Code Management
+"GitLab is our version control platform.
+Developers maintain their source code in Git repositories. We follow branching strategies, create feature branches and use merge requests to review code before merging it into the development or release branches."
+3. GitLab CI/CD – Build and Automation
+"GitLab CI/CD automates the software delivery pipeline.
+Whenever developers push their changes or create a merge request, the pipeline can automatically execute build activities, unit tests and other validation steps.
+This reduces manual effort and provides faster feedback."
+4. SonarQube – Code Quality
+"SonarQube performs static code analysis.
+It identifies bugs, code smells, security hotspots and code coverage gaps.
+It also helps us maintain coding standards and prevent poor-quality code from progressing further in the delivery pipeline."
+5. Nexus IQ and Fortify – Security Validation
+"These tools help us implement DevSecOps practices.
+Nexus IQ evaluates open-source dependencies, including known vulnerabilities and license compliance.
+Fortify performs Static Application Security Testing, commonly called SAST, to identify potential security vulnerabilities in our application source code."
+6. JFrog Xray – Artifact Security
+"JFrog Xray scans application artifacts and packages.
+It helps identify vulnerabilities and policy violations in the artifacts that we generate and distribute."
+
+Slide 2 – Global Overview on ITG Toolchain
+
+This slide explains the application onboarding process into the ITG toolchain.
+Whenever a new application or project is introduced, it needs to be onboarded into our centralized DevOps environment.
+The purpose is to ensure that every application follows the organization's standard development, quality and security practices."
+
+1. Application onboarding
+"When a new application is onboarded, the required project configuration and access permissions are established in the ITG DevOps environment.
+This ensures that the application can use the standard toolchain."
+2. Project APcode and pipeline information
+"Each application must follow the prescribed project identification and pipeline naming conventions.
+The same project information should be consistently maintained across the relevant tools.
+This helps us establish traceability between GitLab, SonarQube, security scanning tools and artifact repositories."
+3. DevOps Portal
+"The DevOps portal acts as the central entry point for managing tool access.
+From this portal, users can manage their access rights and navigate to the different ITG toolchain platforms."
+4. Access management
+"If your account access expires or becomes inactive, you can use the self-service option.
+Navigate to 'Manage My Access' and reactivate your account, subject to the applicable access policy."
+5. SonarQube naming convention
+"One important convention to remember is the SonarQube project key.
+As mentioned in the slide, the naming convention is:
+trigram_pipeline_name
+We should follow this convention consistently while configuring projects."
+Conclude the slide:
+"The key takeaway is that application onboarding is not just about creating a repository. It includes proper project identification, tool configuration, access management and pipeline integration."
+
+Slide 3 – Scanning Tools: DevSecOps
+
+This is one of the most important parts of our DevOps process.
+DevSecOps means integrating security practices into the complete software development lifecycle rather than treating security as a separate activity.
+We use four major scanning tools, and each tool has a different responsibility."
+Explain the four tools:
+1. SonarQube – Code Analysis
+"SonarQube analyzes the application source code.
+It identifies:
+Bugs.
+Code smells.
+Security hotspots.
+Code coverage issues.
+Maintainability problems.
+It also provides a quality gate.
+If the configured quality gate conditions are not satisfied, the pipeline can be prevented from progressing."
+2. Nexus IQ – Open-Source Risk
+"Modern applications depend on several third-party libraries and open-source components.
+Nexus IQ checks these dependencies against configured security and license policies.
+For example, if our Angular application uses a third-party npm package containing a known vulnerability, Nexus IQ can identify the associated risk."
+3. Fortify – Application Security
+"Fortify performs Static Application Security Testing.
+It analyzes application source code to identify security weaknesses.
+For example:
+SQL injection.
+Cross-site scripting.
+Insecure data handling.
+Other application security vulnerabilities.
+This helps developers identify security issues before the application reaches production."
+4. JFrog Xray – Artifact Scanning
+"JFrog Xray focuses on the security of generated artifacts and packages.
+After the application is built, Xray can analyze the artifact and its associated dependencies for known vulnerabilities and policy violations.
+This helps ensure that vulnerable artifacts are not promoted through the delivery process."
+Explain the bottom workflow
+"Let's understand how these tools work together.
+The developer commits code.
+A pull request or merge request is created for review.
+SonarQube performs code quality analysis.
+Fortify performs security analysis.
+Nexus IQ checks open-source dependency risks.
+JFrog Xray scans the generated artifact.
+Based on the configured release policies, the application proceeds for release approval.
+If a mandatory security or quality check fails, the pipeline should be blocked.
+The responsible team must analyze the issue, fix it and rerun the pipeline."
+Important statement:
+"Our objective is not simply to execute scans. It is to ensure that security and quality issues are identified early and resolved before release."
+
+
+Slide 4 – Activities: ITG Toolchain & DevSecOps
+
+This slide summarizes the major activities and responsibilities involved in supporting application teams through the ITG toolchain."
+Explain the activities in groups rather than reading every bullet individually.
+1. Application onboarding and configuration
+"We support application teams during onboarding into the ITG DevOps environment.
+This includes repository configuration, SonarQube project setup, pipeline integration and the required tool configurations."
+2. CI/CD pipeline implementation
+"We help teams implement CI pipelines using GitLab CI/CD.
+We also support migration from existing Jenkins pipelines to GitLab CI/CD.
+The objective is to standardize pipeline implementation and reduce manual build and deployment activities."
+3. Security tool integration
+"We assist teams with onboarding and configuring Fortify and Nexus IQ.
+We ensure that the required SAST and Software Composition Analysis checks are integrated into the pipeline."
+4. DevSecOps standards and best practices
+"We guide development teams to follow organizational DevSecOps standards.
+This includes secure coding practices, code quality standards, dependency management and appropriate security controls."
+5. Tools and plugin support
+"We also provide technical assistance for tool-related issues, pipeline failures, configuration problems and plugin integration."
+6. Testing guidance
+"We encourage teams to follow a Test-Driven Development approach wherever applicable.
+We provide guidance on unit testing and automation testing to improve application reliability and maintainability."
+7. SonarQube report validation
+"Before CAB approval, we help validate SonarQube reports.
+We pay particular attention to technical debt, unit test coverage and the applicable quality requirements.
+The objective is to ensure that the application satisfies the required quality criteria before proceeding with release approval."
+Conclude the slide:
+"So, our responsibility is not limited to maintaining tools. We work closely with application teams to improve development practices, automate delivery and maintain quality and security standards."
+
+Slide 5 – Git Tooling & Practices
+
+Git is the foundation of our source code management process.
+Following a consistent branching strategy and naming convention is important because it helps us maintain clean repositories, manage releases and avoid unnecessary integration issues."
+1. Branch naming conventions
+"We follow a structured branching approach.
+We have different branches for different purposes."
+
+
+2. Feature branch creation
+"When a developer starts working on a new feature or task, they should create a separate feature branch from the appropriate base branch.
+For example:
+feature/TCAAS1234-XXX
+Here, the branch name includes the JIRA ticket reference.
+This helps us trace code changes back to the corresponding requirement or defect."
+3. Release naming convention
+"We should follow the agreed release naming convention.
+Before creating a release package, we must ensure that the correct release branch and version tag are used."
+4. Tag verification
+"Tags are important because they identify a specific version of the source code.
+For example:
+1.0, 1.1 or the organization's agreed semantic version format.
+We should verify that the correct tag has been created and points to the intended commit."
+5. Post-release commit validation
+"One important practice mentioned here is to ensure that there are no unintended commits after release package creation.
+The source code used for the release must remain traceable to the approved release version.
+Any subsequent changes should follow the appropriate branching and release process."
+6. Compare branches
+"Before merging or releasing, developers should compare the relevant branches.
+This helps identify missing commits, unexpected changes and differences between the release and development branches."
+7. Commit message convention
+"We should use meaningful commit messages.
+As mentioned in the slide, the recommended format is:
+JIRA ID + Fix description
+For example:
+TCAAS1234 - Fixed dashboard loading issue
+This improves traceability and makes code reviews easier."
+Explain the GitFlow diagram
+"The diagram illustrates how feature development, release preparation and production hotfixes are managed.
+Feature branches are used for individual development activities.
+Changes are integrated into the develop branch.
+A release branch is created when we prepare a new release.
+Once validated, the release is merged into the production branch and tagged.
+If a critical production issue occurs, a hotfix branch is created.
+The hotfix must also be merged back into the relevant development and release branches to avoid losing the correction."
+Closing statement
+"Following these Git practices helps us maintain repository consistency, release traceability and a controlled software delivery process."
