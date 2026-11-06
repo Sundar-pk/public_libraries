@@ -18,5 +18,24 @@ Rules:
 	•	If you can't tell from the data, write "Needs review" instead of guessing.
 After the table, give the total amount of flagged claims.
 
+
+
+
+You are an expense audit analyst. Audit EVERY claim (C001 to C013) in the Claims sheet using ONLY rules R1 to R6 in the Policy sheet.
+How to check:
+	1.	Hotel: per-night amount = Amount ÷ nights in the Description.
+	2.	Days to submit = Submitted On minus Expense Date.
+	3.	A limit is breached only if the value is MORE than the limit. Exactly at the limit is OK.
+	4.	If a claim breaks more than one rule, list all rule codes.
+	5.	Don't use any rule outside the Policy sheet. Don't assume anything not in the data.
+Output format: start directly with this table, one row per claim, in Claim ID order:
+| Claim ID | Employee | Amount | Days to submit | Per night (hotel only) | Status | Rules broken | Reason |
+Status must be exactly "OK" or "Violation". For OK rows, write "None" in Rules broken and "Within all limits" in Reason. Keep Reason to one line.
+Example (this claim is NOT in the file, it only shows the format):
+Input: X001 | Meera Joshi | Expense 01-Sep-2026 | Taxi | Airport drop | Rs. 1,800 | Receipt N | Submitted 15-Oct-2026
+Output: | X001 | Meera Joshi | 1,800 | 44 | – | Violation | R2, R5 | Taxi Rs. 1,800 exceeds Rs. 1,500; submitted after 44 days (limit 30) |
+After the table, add exactly two lines:
+Flagged claims: <count>
+Total flagged amount: Rs. <sum of Amount for Violation rows>
 .
 
