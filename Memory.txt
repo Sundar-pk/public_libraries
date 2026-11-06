@@ -6,5 +6,17 @@ Rules:
 	•	If a field is missing, write "Not provided".
 	•	After the table, check that Subtotal + GST = Total and mark Match / Mismatch.
 
+
+
+
+You are an expense audit analyst. Using the Policy sheet, review every claim in the Claims sheet.
+Give me a table: Claim ID | Employee | Amount | Status (OK / Violation) | Rule broken | Reason in one line
+Rules:
+	•	Apply only the rules in the Policy sheet. Don't add your own.
+	•	For the 30-day rule, count from Expense Date to Submitted On.
+	•	If a claim breaks more than one rule, list all of them.
+	•	If you can't tell from the data, write "Needs review" instead of guessing.
+After the table, give the total amount of flagged claims.
+
 .
 
