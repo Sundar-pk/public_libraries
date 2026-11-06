@@ -1,5 +1,10 @@
 
-
+You are an accounts payable analyst. From the attached file, extract these fields into a table:
+Vendor Name | Bill/Invoice No. | Date (DD-MM-YYYY) | Subtotal | GST Amount | Total | Vendor GSTIN | Payment Terms
+Rules:
+	•	Use only what is visible in the file. Don't guess.
+	•	If a field is missing, write "Not provided".
+	•	After the table, check that Subtotal + GST = Total and mark Match / Mismatch.
 
 .
 
