@@ -2,17 +2,12 @@ Follow challenge/agent_instruction.md and the plan skill
 (challenge/devplan.md). Read challenge/jira.md and work ONLY on
 Task T1. Use the repo in code/. Return dev_plan and clarification.
 
-maven {
-    name 'gradle-plugins-cache'
-    url "{{env.artifactory_host}}/artifactory/shared-maven-1-plugins-gradle-org-cache"
-    credentials {
-        username = System.properties["gradle.wrapperUser"]
-        password = System.properties["gradle.wrapperPassword"]
-    }
-    authentication {
-        digest(BasicAuthentication)
-    }
-    metadataSources {
-        mavenPom()
-    }
-}
+read -p "user: " U; read -s -p "pass: " P; echo
+curl -s -u "$U:$P" -o /tmp/cdx.jar "https://repo.artifactory-dogen.group.echonet/artifactory/shared-maven-1-plugins-gradle-org-cache/org/cyclonedx/cyclonedx-gradle-plugin/3.2.4/cyclonedx-gradle-plugin-3.2.4.jar"; unset P
+tar -tf /tmp/cdx.jar | grep -i "gradle-plugins"
+tar -xOf /tmp/cdx.jar META-INF/gradle-plugins/org.cyclonedx.bom.properties
+
+
+F=/c/Work/Jenkins_Exit/itg/cib-pipeline/resources/pipeline-templates/languages/gradle-app.yml
+sed -n '238,275p' $F
+
