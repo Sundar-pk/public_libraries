@@ -3,20 +3,4 @@ Follow challenge/agent_instruction.md and the plan skill
 Task T1. Use the repo in code/. Return dev_plan and clarification.
 
 
-buildscript {
-    repositories {
-        maven {
-            url 'https://repo.artifactory-dogen.group.echonet/artifactory/shared-maven-1-repo1-maven-org-cache'
-            credentials {
-                username = System.properties["gradle.wrapperUser"]
-                password = System.properties["gradle.wrapperPassword"]
-            }
-        }
-    }
-    dependencies {
-        classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.15.0'
-    }
-}
-
-apply plugin: 'info.solidsoft.pitest'
-
+BASE=https://repo.artifactory-dogen.group.echonet/artifactory/shared-maven-1-repo1-maven-org-cache; read -p "user: " U; read -s -p "pass: " P; echo; echo "$(curl -s -o /dev/null -w '%{http_code}' -u "$U:$P" "$BASE/org/cyclonedx/cyclonedx-gradle-plugin/1.8.0/cyclonedx-gradle-plugin-1.8.0.pom")  cyclonedx pom"; unset P
