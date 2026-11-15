@@ -2,5 +2,32 @@ Follow challenge/agent_instruction.md and the plan skill
 (challenge/devplan.md). Read challenge/jira.md and work ONLY on
 Task T1. Use the repo in code/. Return dev_plan and clarification.
 
+buildscript {
+    repositories {
+        maven {
+            url 'https://repo.artifactory-dogen.group.echonet/artifactory/shared-maven-1-repo1-maven-org-cache'
+            credentials {
+                username = System.properties["gradle.wrapperUser"]
+                password = System.properties["gradle.wrapperPassword"]
+            }
+        }
+        maven {
+            url 'https://repo.artifactory-dogen.group.echonet/artifactory/shared-maven-1-plugins-gradle-org-cache'
+            credentials {
+                username = System.properties["gradle.wrapperUser"]
+                password = System.properties["gradle.wrapperPassword"]
+            }
+        }
+    }
+    dependencies {
+        classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.15.0'
+        classpath 'org.cyclonedx:cyclonedx-gradle-plugin:3.2.4'
+    }
+}
 
-BASE=https://repo.artifactory-dogen.group.echonet/artifactory/shared-maven-1-plugins-gradle-org-cache; read -p "user: " U; read -s -p "pass: " P; echo; for v in 2.2.0 3.2.4 3.5.1; do echo "$(curl -s -o /dev/null -w '%{http_code}' -u "$U:$P" "$BASE/org/cyclonedx/bom/org.cyclonedx.bom.gradle.plugin/$v/org.cyclonedx.bom.gradle.plugin-$v.pom")  marker $v"; echo "$(curl -s -o /dev/null -w '%{http_code}' -u "$U:$P" "$BASE/org/cyclonedx/cyclonedx-gradle-plugin/$v/cyclonedx-gradle-plugin-$v.pom")  impl $v"; done; unset P
+plugins {
+    id 'java'
+    id 'jacoco'
+}
+apply plugin: 'info.solidsoft.pitest'
+apply plugin: 'org.cyclonedx.bom'
