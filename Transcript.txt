@@ -2,32 +2,4 @@ Follow challenge/agent_instruction.md and the plan skill
 (challenge/devplan.md). Read challenge/jira.md and work ONLY on
 Task T1. Use the repo in code/. Return dev_plan and clarification.
 
-buildscript {
-    repositories {
-        maven {
-            url 'https://repo.artifactory-dogen.group.echonet/artifactory/shared-maven-1-repo1-maven-org-cache'
-            credentials {
-                username = System.properties["gradle.wrapperUser"]
-                password = System.properties["gradle.wrapperPassword"]
-            }
-        }
-        maven {
-            url 'https://repo.artifactory-dogen.group.echonet/artifactory/shared-maven-1-plugins-gradle-org-cache'
-            credentials {
-                username = System.properties["gradle.wrapperUser"]
-                password = System.properties["gradle.wrapperPassword"]
-            }
-        }
-    }
-    dependencies {
-        classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.15.0'
-        classpath 'org.cyclonedx:cyclonedx-gradle-plugin:3.2.4'
-    }
-}
-
-plugins {
-    id 'java'
-    id 'jacoco'
-}
-apply plugin: 'info.solidsoft.pitest'
-apply plugin: 'org.cyclonedx.bom'
+grep -rn -i "cyclonedx" /c/Work/Jenkins_Exit/itg/cib-pipeline/resources/pipeline-templates --include="*.yml"
