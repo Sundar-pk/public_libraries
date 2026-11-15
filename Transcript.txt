@@ -1,3 +1,6 @@
 Follow challenge/agent_instruction.md and the plan skill
 (challenge/devplan.md). Read challenge/jira.md and work ONLY on
 Task T1. Use the repo in code/. Return dev_plan and clarification.
+
+
+BASE=https://repo.artifactory-dogen.group.echonet/artifactory/shared-maven-1-repo1-maven-org-cache; read -p "user: " U; read -s -p "pass: " P; echo; for path in "info/solidsoft/gradle/pitest/gradle-pitest-plugin/1.15.0/gradle-pitest-plugin-1.15.0.pom" "info/solidsoft/pitest/info.solidsoft.pitest.gradle.plugin/1.15.0/info.solidsoft.pitest.gradle.plugin-1.15.0.pom"; do echo "$(curl -s -o /dev/null -w '%{http_code}' -u "$U:$P" "$BASE/$path")  $path"; done; unset P
