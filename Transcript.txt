@@ -1,9 +1,3 @@
-Follow challenge/agent_instruction.md and the plan skill
-(challenge/devplan.md). Read challenge/jira.md and work ONLY on
-Task T1. Use the repo in code/. Return dev_plan 
-
-
-
 # Sync cib-pipeline jars (+poms) from CIB Artifactory -> Dogen Artifactory (p-6771)
 #
 # CI/CD variables (Settings > CI/CD > Variables, masked):
@@ -85,7 +79,7 @@ sync-cib-to-dogen:
         SRC="$1"; DST="$2"; COPIED=0; SKIPPED=0; FAILED=0
         log "===== SYNC $SRC -> $DST (last $LOOKBACK) ====="
 
-        QUERY="items.find({\"repo\":\"$SRC\",\"path\":{\"\$match\":\"$ARTIFACT_PATH\"},\"\$or\":[{\"name\":{\"\$match\":\"*.jar\"}},{\"name\":{\"\$match\":\"*.pom\"}}],\"modified\":{\"\$last\":\"$LOOKBACK\"}}).include(\"path\",\"name\",\"actual_sha1\")"
+        QUERY="items.find({\"repo\":\"$SRC\",\"path\":{\"\$match\":\"$ARTIFACT_PATH\"},\"\$or\":[{\"name\":{\"\$match\":\"*.jar\"}},{\"name\":{\"\$match\":\"*.pom\"}}],\"modified\":{\"\$last\":\"$LOOKBACK\"}}).include(\"repo\",\"path\",\"name\",\"actual_sha1\")"
         log "AQL: $QUERY"
 
         HTTP=$(curl -sS --max-time 120 -u "$CIB_AUTH" -H "Content-Type: text/plain" \
