@@ -1,16 +1,86 @@
 Follow challenge/agent_instruction.md and the plan skill
 (challenge/devplan.md). Read challenge/jira.md and work ONLY on
-Task T1. Use the repo in code/. Return dev_plan and clarification.
+Task T1. Use the repo in code/. Return dev_plan and 
 
-// line ~21, inside buildscript { dependencies { ... } }
-if (gradle.startParameter.taskNames.any { it.contains('cyclonedx') }) {
-    classpath 'org.cyclonedx:cyclonedx-gradle-plugin:3.2.4'
-}
 
-// line ~41, after subprojects { ... }
-if (gradle.startParameter.taskNames.any { it.contains('cyclonedx') }) {
-    apply plugin: 'org.cyclonedx.bom'
-    cyclonedxBom {
-        jsonOutput = file("$buildDir/reports/bom.json")
-    }
-}
+# Sync cib-pipeline jars (+poms) from CIB Artifactory -> Dogen Artifactory (p-6771)
+#
+# CI/CD variables (Settings > CI/CD > Variables, masked):
+#   ARTIFACTORY_USER / ARTIFACTORY_PASSWORD           -> Dogen (target, deploy rights)
+#   ARTIFACTORY_CIB_USER / ARTIFACTORY_CIB_PASSWORD   -> CIB (source, read rights)
+#
+# Schedule: CI/CD > Schedules > cron "0 */6 * * *" (every 6 hours)
+# Manual:   CI/CD > Pipelines > Run pipeline  (optionally set LOOKBACK, e.g. 7d)
+
+stages:
+  - sync
+
+variables:
+  CIB_URL: "https://artifactory.cib.echonet/artifactory"
+  DOGEN_URL: "https://artifactory-dogen.group.echonet/artifactory"
+  LOOKBACK: "2d"                      # only artifacts modified in this window
+  ARTIFACT_PATH: "com/bnpparibas/cib/gmiteng/cib-pipeline/*"
+  # source repo -> target repo
+  SRC_SNAPSHOT: "gmiteng-maven-local-dev"
+  DST_SNAPSHOT: "p-6771-maven-SNAPSHOT"
+  SRC_RELEASE: "gmiteng-maven-local-release"
+  DST_RELEASE: "p-6771-maven-RELEASE"
+
+sync-cib-to-dogen:
+  stage: sync
+  # Use the image from your tech standard; it needs: curl, jq, sha1sum
+  # image: <your-standard-image>
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web"
+  resource_group: cib-dogen-sync
+  timeout: 1h
+  script:
+    - |
+      set -eu
+      CIB_AUTH="$ARTIFACTORY_CIB_USER:$ARTIFACTORY_CIB_PASSWORD"
+      DOGEN_AUTH="$ARTIFACTORY_USER:$ARTIFACTORY_PASSWORD"
+      WORK="$(mktemp -d)"
+      FAILED=0
+
+      sync_repo() {
+        SRC="$1"; DST="$2"
+        echo "=== $SRC -> $DST (last $LOOKBACK) ==="
+
+        QUERY="items.find({\"repo\":\"$SRC\",\"path\":{\"\$match\":\"$ARTIFACT_PATH\"},\"\$or\":[{\"name\":{\"\$match\":\"*.jar\"}},{\"name\":{\"\$match\":\"*.pom\"}}],\"modified\":{\"\$last\":\"$LOOKBACK\"}}).include(\"path\",\"name\",\"actual_sha1\")"
+
+        curl -fsS -u "$CIB_AUTH" -H "Content-Type: text/plain" \
+          -X POST "$CIB_URL/api/search/aql" -d "$QUERY" -o "$WORK/result.json"
+
+        COUNT=$(jq '.results | length' "$WORK/result.json")
+        echo "Found $COUNT candidate file(s)"
+
+        jq -r '.results[] | "\(.path)/\(.name) \(.actual_sha1)"' "$WORK/result.json" |
+        while read -r FILE SHA1; do
+          # skip if identical file already in Dogen
+          DST_SHA1=$(curl -sS -u "$DOGEN_AUTH" "$DOGEN_URL/api/storage/$DST/$FILE" 2>/dev/null \
+                     | jq -r '.checksums.sha1 // empty' 2>/dev/null || true)
+          if [ "$DST_SHA1" = "$SHA1" ]; then
+            echo "SKIP  $FILE"
+            continue
+          fi
+          curl -fsS -u "$CIB_AUTH" -o "$WORK/file.bin" "$CIB_URL/$SRC/$FILE"
+          if [ "$(sha1sum "$WORK/file.bin" | cut -d' ' -f1)" != "$SHA1" ]; then
+            echo "ERROR checksum mismatch on download: $FILE"; echo x >> "$WORK/failed"; continue
+          fi
+          if curl -fsS -u "$DOGEN_AUTH" -X PUT -H "X-Checksum-Sha1: $SHA1" \
+               -T "$WORK/file.bin" "$DOGEN_URL/$DST/$FILE" > /dev/null; then
+            echo "COPIED $FILE"
+          else
+            echo "ERROR upload failed: $FILE"; echo x >> "$WORK/failed"
+          fi
+        done
+      }
+
+      sync_repo "$SRC_SNAPSHOT" "$DST_SNAPSHOT"
+      sync_repo "$SRC_RELEASE"  "$DST_RELEASE"
+
+      if [ -f "$WORK/failed" ]; then
+        echo "Some files failed to copy"; exit 1
+      fi
+      echo "Sync finished OK"
