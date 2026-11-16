@@ -2,5 +2,35 @@ Follow challenge/agent_instruction.md and the plan skill
 (challenge/devplan.md). Read challenge/jira.md and work ONLY on
 Task T1. Use the repo in code/. Return dev_plan and clarification.
 
-cd /c/Work/Jenkins_Exit/itg/cib-pipeline/resources/pipeline-templates
-grep -rn "init.gradle\|gradle_cli_opts" --include="*.yml" . | head -30
+buildscript {
+    repositories {
+        maven {
+            url 'https://repo.artifactory-dogen.group.echonet/artifactory/shared-maven-1-plugins-gradle-org-cache'
+            credentials {
+                username = System.properties["gradle.wrapperUser"]
+                password = System.properties["gradle.wrapperPassword"]
+            }
+        }
+        maven {
+            url 'https://repo.artifactory-dogen.group.echonet/artifactory/shared-maven-1-repo1-maven-org-cache'
+            credentials {
+                username = System.properties["gradle.wrapperUser"]
+                password = System.properties["gradle.wrapperPassword"]
+            }
+        }
+    }
+    dependencies {
+        // only load our own copy when the init script hasn't already applied the plugin
+        if (!plugins.any { it.class.name == 'org.cyclonedx.gradle.CyclonedxPlugin' }) {
+            classpath 'org.cyclonedx:cyclonedx-gradle-plugin:3.2.4'
+        }
+    }
+}
+
+if (!plugins.any { it.class.name == 'org.cyclonedx.gradle.CyclonedxPlugin' }) {
+    apply plugin: 'org.cyclonedx.bom'
+    cyclonedxBom {
+        jsonOutput = file("$buildDir/reports/bom.json")
+    }
+}
+
