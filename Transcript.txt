@@ -2,7 +2,5 @@ Follow challenge/agent_instruction.md and the plan skill
 (challenge/devplan.md). Read challenge/jira.md and work ONLY on
 Task T1. Use the repo in code/. Return dev_plan and clarification.
 
-ls -l /tmp/cdx.jar
-head -c 100 /tmp/cdx.jar | head -n 2
-cd /tmp && jar tf cdx.jar | grep -i gradle-plugins
-jar xf cdx.jar META-INF/gradle-plugins && cat META-INF/gradle-plugins/*.properties
+cd /c/Work/Jenkins_Exit/itg/cib-pipeline/resources/pipeline-templates
+grep -rn "init.gradle\|gradle_cli_opts" --include="*.yml" . | head -30
