@@ -1,0 +1,89 @@
+meta:
+  description: |-
+    Optional Dogen Artifactory publishing for Gradle apps. Enabled per project with the flag
+    push_dogen: true (default false). Publishes the already-built artifacts (jar, pom, ...) to the
+    Dogen Artifactory right after the normal CIB upload. A Dogen failure only marks the build
+    UNSTABLE; the pipeline continues. Included by languages/gradle-app.
+  owner: cib-pipeline
+  tags:
+    - tool
+
+env:
+  push_dogen:
+    value: false
+    description: Also publish the artifacts to the Dogen Artifactory after the CIB upload
+  dogen_artifactory_host:
+    value: 'https://artifactory-dogen.group.echonet'
+    description: Dogen Artifactory base URL (without /artifactory)
+  dogen_artifactory_project:
+    value: ''
+    description: Dogen project prefix of the repos, e.g. p-6771
+  dogen_artifactory_repo_dev:
+    value: '{{env.dogen_artifactory_project}}-maven-SNAPSHOT'
+    description: Dogen repo for dev (snapshot) artifacts
+  dogen_artifactory_repo_release:
+    value: '{{env.dogen_artifactory_project}}-maven-RELEASE'
+    description: Dogen repo for release artifacts
+  dogen_artifactory_full_host:
+    value: 'artifactory-dogen.group.echonet'
+    description: Host part used in the Jenkins credential ID of the Dogen Artifactory
+  dogen_artifactory_credential_id:
+    # Same convention as the CIB credential in tools/artifactory.yml:
+    #   DEVOPS___<host>___<project>-token___read-write
+    # ASSUMED - confirm the exact ID in Jenkins and adjust this default if the Dogen one differs.
+    value: 'DEVOPS___{{env.dogen_artifactory_full_host}}___{{env.dogen_artifactory_project}}-token___read-write'
+    description: Jenkins credential ID (user + token) of the Dogen deploy account; resolved from Jenkins, override only if it differs
+  dogen_gradle_init_script_file:
+    value: '.dogen-publish-init.gradle'
+    description: Init script that adds the Dogen repo (written at publish time, holds no secrets)
+  dogen_gradle_init_script_content:
+    value: |
+      allprojects {
+        afterEvaluate {
+          if (plugins.hasPlugin('maven-publish')) {
+            publishing {
+              repositories {
+                maven {
+                  name = 'dogen'
+                  url = uri(System.getenv('DOGEN_ARTIFACTORY_URL'))
+                  credentials {
+                    username = System.getenv('DOGEN_ARTIFACTORY_USER')
+                    password = System.getenv('DOGEN_ARTIFACTORY_PASSWORD')
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    description: Gradle init script; URL and credentials come from environment variables
+
+secrets:
+  - name: dogen_artifactory
+    provider: jenkins
+    type: basic
+    id: '{{env.dogen_artifactory_credential_id}}'
+    description: Dogen Artifactory credentials (user + token) used to publish artifacts
+
+# Separate steps => separate stages, wired into the artifact_upload_* jobs of languages/gradle-app
+# with an "if: push_dogen" condition. skip_error: unstable => a failure never stops the pipeline.
+# Only the Dogen repository task runs: no rebuild, and nothing is sent to CIB a second time.
+artifact_upload_dogen_dev:
+  description: Publishes the already-built dev artifacts to the Dogen Artifactory
+  on_error:
+    skip_error: unstable
+  commands:
+    - write:
+        file: '{{env.dogen_gradle_init_script_file}}'
+        text: '{{env.dogen_gradle_init_script_content}}'
+    - cmd: DOGEN_ARTIFACTORY_URL={{env.dogen_artifactory_host}}/artifactory/{{env.dogen_artifactory_repo_dev}} DOGEN_ARTIFACTORY_USER={{secrets.dogen_artifactory.user}} DOGEN_ARTIFACTORY_PASSWORD={{secrets.dogen_artifactory.secret}} ./gradlew {{env.gradle_opts}} -I {{env.dogen_gradle_init_script_file}} publishAllPublicationsToDogenRepository -x check
+
+artifact_upload_dogen_release:
+  description: Publishes the already-built release artifacts to the Dogen Artifactory
+  on_error:
+    skip_error: unstable
+  commands:
+    - write:
+        file: '{{env.dogen_gradle_init_script_file}}'
+        text: '{{env.dogen_gradle_init_script_content}}'
+    - cmd: DOGEN_ARTIFACTORY_URL={{env.dogen_artifactory_host}}/artifactory/{{env.dogen_artifactory_repo_release}} DOGEN_ARTIFACTORY_USER={{secrets.dogen_artifactory.user}} DOGEN_ARTIFACTORY_PASSWORD={{secrets.dogen_artifactory.secret}} ./gradlew {{env.gradle_opts}} -I {{env.dogen_gradle_init_script_file}} publishAllPublicationsToDogenRepository -x check
